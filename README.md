@@ -2,6 +2,9 @@
 
 Vexil is a lightweight TypeScript validation toolkit built around small, composable type helpers. Each helper is a class that wraps a value and exposes `validate()` with a set of reusable predicates. The goal is a smoother developer experience when adding type-aware validation without bringing in a heavy schema library.
 
+The name comes from the Latin word "vexillum":
+"1. (in ancient Rome) a military standard or banner, especially one of a maniple."
+
 ## Purpose
 - Provide simple, chainable validation helpers for common primitives and formats.
 - Keep validators small, readable, and easy to reuse across codebases.
