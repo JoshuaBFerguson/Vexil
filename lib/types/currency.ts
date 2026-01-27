@@ -10,11 +10,12 @@ export class VexilCurrency extends Vexil<string> {
     }
 
     private parse() {
-        // Regex to match formats like "100 USD", "100.50 EUR", "123.45GBP" (with optional space)
-        const match = this.input.match(/^(\d+(?:\.\d+)?)\s*([A-Z]{3})$/);
+        const cleaned = this.input.trim();
+        // Regex to match formats like "100 USD", "-100.50 eur", "123.45GBP" (with optional space)
+        const match = cleaned.match(/^([+-]?\d+(?:\.\d+)?)\s*([A-Za-z]{3})$/);
         if (match) {
             this.amount = parseFloat(match[1]!);
-            this.currencyCode = match[2]!;
+            this.currencyCode = match[2]!.toUpperCase();
         }
     }
 
@@ -31,38 +32,42 @@ export class VexilCurrency extends Vexil<string> {
     }
 
     static positiveAmount() {
-        return (inst: VexilCurrency): boolean => !!inst.amount && inst.amount > 0;
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && inst.amount > 0;
     }
 
     static greaterThanAmount(num: number) {
-        return (inst: VexilCurrency): boolean => !!inst.amount && inst.amount > num;
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && inst.amount > num;
     }
 
     static lessThanAmount(num: number) {
-        return (inst: VexilCurrency): boolean => !!inst.amount && inst.amount < num;
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && inst.amount < num;
     }
 
     static betweenAmounts(min: number, max: number) {
-        return (inst: VexilCurrency): boolean => !!inst.amount && inst.amount > min && inst.amount < max;
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && inst.amount > min && inst.amount < max;
     }
 
     static minAmount(num: number) {
-        return (inst: VexilCurrency): boolean => !!inst.amount && inst.amount >= num;
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && inst.amount >= num;
     }
 
     static maxAmount(num: number) {
-        return (inst: VexilCurrency): boolean => !!inst.amount && inst.amount <= num;
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && inst.amount <= num;
     }
 
     static exactAmount(num: number) {
-        return (inst: VexilCurrency): boolean => !!inst.amount && inst.amount === num;
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && inst.amount === num;
     }
 
     static isWholeNumber() {
-        return (inst: VexilCurrency): boolean => !!inst.amount && Number.isInteger(inst.amount);
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && Number.isInteger(inst.amount);
     }
 
     static hasDecimalPlaces() {
-        return (inst: VexilCurrency): boolean => !!inst.amount && !Number.isInteger(inst.amount);
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && !Number.isInteger(inst.amount);
+    }
+
+    static zeroAmount() {
+        return (inst: VexilCurrency): boolean => typeof inst.amount === "number" && inst.amount === 0;
     }
 }

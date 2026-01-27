@@ -30,8 +30,16 @@ export class VexilNumber extends Vexil<number> {
         return (inst: VexilNumber) => inst.input > 0;
     }
 
+    static nonNegative() {
+        return (inst: VexilNumber) => inst.input >= 0;
+    }
+
     static negative() {
         return (inst: VexilNumber) => inst.input < 0;
+    }
+
+    static nonPositive() {
+        return (inst: VexilNumber) => inst.input <= 0;
     }
 
     static zero() {
@@ -50,6 +58,10 @@ export class VexilNumber extends Vexil<number> {
         return (inst: VexilNumber) => Number.isInteger(inst.input);
     }
 
+    static safeInteger() {
+        return (inst: VexilNumber) => Number.isSafeInteger(inst.input);
+    }
+
     static decimal() {
         return (inst: VexilNumber) => !Number.isInteger(inst.input);
     }
@@ -64,6 +76,10 @@ export class VexilNumber extends Vexil<number> {
 
     static divisibleBy(num: number) {
         return (inst: VexilNumber) => inst.input % num === 0;
+    }
+
+    static inSet(...nums: number[]) {
+        return (inst: VexilNumber) => nums.includes(inst.input);
     }
 }
 
@@ -89,8 +105,16 @@ export class VexilString extends Vexil<string> {
         return (inst: VexilString) => inst.input.length > 0;
     }
 
+    static notBlank() {
+        return (inst: VexilString) => inst.input.trim().length > 0;
+    }
+
     static contains(substring: string) {
         return (inst: VexilString) => inst.input.includes(substring);
+    }
+
+    static containsAny(...substrings: string[]) {
+        return (inst: VexilString) => substrings.some((s) => inst.input.includes(s));
     }
 
     static startsWith(prefix: string) {
@@ -135,6 +159,14 @@ export class VexilString extends Vexil<string> {
 
     static noSpaces() {
         return (inst: VexilString) => !/\s/.test(inst.input);
+    }
+
+    static isTrimmed() {
+        return (inst: VexilString) => inst.input === inst.input.trim();
+    }
+
+    static inSet(...strings: string[]) {
+        return (inst: VexilString) => strings.includes(inst.input);
     }
 }
 

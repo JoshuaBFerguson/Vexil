@@ -10,10 +10,14 @@ export default abstract class Vexil<T> {
     }
 
     public toString() {
-        return this.input ? String(this.input) : undefined;
+        return this.input === null || this.input === undefined ? undefined : String(this.input);
     }
 
     public validate(...args: Array<boolean | ((inst: this) => boolean)>) {
         return args.every((a) => typeof a === "function" ? !!a(this) : !!a);
+    }
+
+    public isValid(...args: Array<boolean | ((inst: this) => boolean)>) {
+        return this.validate(...args);
     }
 }
