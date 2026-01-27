@@ -17,6 +17,54 @@ export class VexilNumber extends Vexil<number> {
     static between(min: number, max: number) {
         return (inst: VexilNumber) => inst.input > min && inst.input < max;
     }
+
+    static equalTo(num: number) {
+        return (inst: VexilNumber) => inst.input === num;
+    }
+
+    static notEqualTo(num: number) {
+        return (inst: VexilNumber) => inst.input !== num;
+    }
+
+    static positive() {
+        return (inst: VexilNumber) => inst.input > 0;
+    }
+
+    static negative() {
+        return (inst: VexilNumber) => inst.input < 0;
+    }
+
+    static zero() {
+        return (inst: VexilNumber) => inst.input === 0;
+    }
+
+    static min(num: number) {
+        return (inst: VexilNumber) => inst.input >= num;
+    }
+
+    static max(num: number) {
+        return (inst: VexilNumber) => inst.input <= num;
+    }
+
+    static integer() {
+        return (inst: VexilNumber) => Number.isInteger(inst.input);
+    }
+
+    static decimal() {
+        return (inst: VexilNumber) => !Number.isInteger(inst.input);
+    }
+
+    static even() {
+        return (inst: VexilNumber) => Number.isInteger(inst.input) && inst.input % 2 === 0;
+    }
+
+    static odd() {
+        return (inst: VexilNumber) => Number.isInteger(inst.input) && inst.input % 2 !== 0;
+    }
+
+    static divisibleBy(num: number) {
+        return (inst: VexilNumber) => inst.input % num === 0;
+    }
 }
 
 export class VexilString extends Vexil<string> {
@@ -32,8 +80,75 @@ export class VexilString extends Vexil<string> {
     static maxLength(num: number) {
         return (inst: VexilString) => inst.input.length <= num;
     }
+
+    static exactLength(num: number) {
+        return (inst: VexilString) => inst.input.length === num;
+    }
+
+    static notEmpty() {
+        return (inst: VexilString) => inst.input.length > 0;
+    }
+
+    static contains(substring: string) {
+        return (inst: VexilString) => inst.input.includes(substring);
+    }
+
+    static startsWith(prefix: string) {
+        return (inst: VexilString) => inst.input.startsWith(prefix);
+    }
+
+    static endsWith(suffix: string) {
+        return (inst: VexilString) => inst.input.endsWith(suffix);
+    }
+
+    static matchesPattern(pattern: RegExp) {
+        return (inst: VexilString) => pattern.test(inst.input);
+    }
+
+    static alphanumeric() {
+        return (inst: VexilString) => /^[a-zA-Z0-9]+$/.test(inst.input);
+    }
+
+    static alphabetic() {
+        return (inst: VexilString) => /^[a-zA-Z]+$/.test(inst.input);
+    }
+
+    static numeric() {
+        return (inst: VexilString) => /^[0-9]+$/.test(inst.input);
+    }
+
+    static uppercase() {
+        return (inst: VexilString) => inst.input === inst.input.toUpperCase();
+    }
+
+    static lowercase() {
+        return (inst: VexilString) => inst.input === inst.input.toLowerCase();
+    }
+
+    static hasNumbers() {
+        return (inst: VexilString) => /\d/.test(inst.input);
+    }
+
+    static hasLetters() {
+        return (inst: VexilString) => /[a-zA-Z]/.test(inst.input);
+    }
+
+    static noSpaces() {
+        return (inst: VexilString) => !/\s/.test(inst.input);
+    }
 }
 
 export class VexilBoolean extends Vexil<boolean> {
 
+    public override validate(...args: (boolean | ((inst: VexilBoolean) => boolean))[]): boolean {
+        return super.validate(...args, (typeof this.input === "boolean"));
+    }
+
+    static isTrue() {
+        return (inst: VexilBoolean) => inst.input === true;
+    }
+
+    static isFalse() {
+        return (inst: VexilBoolean) => inst.input === false;
+    }
 }
