@@ -14,6 +14,8 @@ const emailIsValid = email.validate(
     vxl.EmailAddress.noDotsInUsername()
 );
 
+email.value
+
 
 const money = new vxl.Currency(200.50);
 

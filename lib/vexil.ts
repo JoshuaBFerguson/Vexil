@@ -9,6 +9,10 @@ export default abstract class Vexil<T> {
         return this._input;
     }
 
+    public get value() {
+        return this.input;
+    }
+
     public toString() {
         return this.input === null || this.input === undefined ? undefined : String(this.input);
     }
