@@ -1,5 +1,4 @@
 import vxl from "./lib";
-import type { VexilNumber } from "./lib/types/primitives";
 
 const age = new vxl.Number(12);
 const ageIsValid = age.validate(
@@ -19,7 +18,4 @@ const emailIsValid = email.validate(
 const money = new vxl.Currency(200.50);
 
 
-
-type user = {
-    name: VexilNumber
-}
+const id = new vxl.UUID(vxl.UUID.create())
