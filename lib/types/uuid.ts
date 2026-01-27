@@ -12,8 +12,8 @@ export class VexilUUID extends Vexil<string> {
     }
 
     private parse() {
-        if (UUID_REGEX.test(this.input)) {
-            this.normalized = this.input.toLowerCase();
+        if (UUID_REGEX.test(this.value)) {
+            this.normalized = this.value.toLowerCase();
         } else {
             this.normalized = undefined;
         }

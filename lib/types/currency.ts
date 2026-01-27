@@ -10,7 +10,7 @@ export class VexilCurrency extends Vexil<string> {
     }
 
     private parse() {
-        const cleaned = this.input.trim();
+        const cleaned = this.value.trim();
         // Regex to match formats like "100 USD", "-100.50 eur", "123.45GBP" (with optional space)
         const match = cleaned.match(/^([+-]?\d+(?:\.\d+)?)\s*([A-Za-z]{3})$/);
         if (match) {

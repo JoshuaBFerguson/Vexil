@@ -12,7 +12,7 @@ export class VexilEmailAddress extends Vexil<string> {
     }
 
     private parse() {
-        const match = this.input.match(/^([^@\s]+)@([^@\s]+)$/);
+        const match = this.value.match(/^([^@\s]+)@([^@\s]+)$/);
         if (match) {
             this.userName = match[1];
             const domain = match[2];

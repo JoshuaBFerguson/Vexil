@@ -5,16 +5,12 @@ export default abstract class Vexil<T> {
         this._input = input;
     }
 
-    public get input() {
+    public get value() {
         return this._input;
     }
 
-    public get value() {
-        return this.input;
-    }
-
     public toString() {
-        return this.input === null || this.input === undefined ? undefined : String(this.input);
+        return this.value === null || this.value === undefined ? undefined : String(this.value);
     }
 
     public validate(...args: Array<boolean | ((inst: this) => boolean)>) {
