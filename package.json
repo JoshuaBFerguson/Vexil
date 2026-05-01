@@ -2,7 +2,7 @@
   "name": "vexil",
   "module": "index.ts",
   "type": "module",
-  "private": true,
+  "private": false,
   "devDependencies": {
     "@types/bun": "latest"
   },
