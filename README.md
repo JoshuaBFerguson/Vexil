@@ -33,12 +33,28 @@ const isPathValid = path.validate(
   vxl.Path.extension("tsx"),
   vxl.Path.noTraversal()
 );
+
+const cookie = new vxl.Cookie("session=abc123; Path=/; HttpOnly; Secure; SameSite=Lax");
+const isCookieValid = cookie.validate(
+  vxl.Cookie.secure(),
+  vxl.Cookie.httpOnly()
+);
+
+const createdCookie = vxl.Cookie.create("theme", "dark", {
+  path: "/",
+  sameSite: "Lax",
+  secure: true
+});
+const readCookie = vxl.Cookie.read("theme=dark; session=abc123", "session");
+const updatedCookie = vxl.Cookie.update(cookie, { value: "def456" });
+const deletedCookie = vxl.Cookie.delete("session", { path: "/" });
 ```
 
 ## Included Types
 - Primitives: `Number`, `String`, `Boolean`
 - Formats: `EmailAddress`, `Currency`, `URL`, `UUID`, `HexColor`, `Slug`, `PhoneNumber`, `IPAddress`
 - File system: `Path`, `FileName`, `FileExtension`
+- Browser: `Cookie`, `CookieName`, `CookieValue`
 - Dates: `Date`
 
 ## Install & Run (Bun)

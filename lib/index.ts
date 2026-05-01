@@ -9,6 +9,7 @@ import { VexilSlug } from "./types/slug";
 import { VexilPhoneNumber } from "./types/phoneNumber";
 import { VexilIPAddress } from "./types/ipAddress";
 import { VexilPath, VexilFileName, VexilFileExtension } from "./types/fileSystem";
+import { VexilCookie, VexilCookieName, VexilCookieValue } from "./types/cookie";
 
 export default {
     String: Primitives.VexilString,
@@ -26,5 +27,8 @@ export default {
     IPAddress: VexilIPAddress,
     Path: VexilPath,
     FileName: VexilFileName,
-    FileExtension: VexilFileExtension
+    FileExtension: VexilFileExtension,
+    Cookie: VexilCookie,
+    CookieName: VexilCookieName,
+    CookieValue: VexilCookieValue
 };

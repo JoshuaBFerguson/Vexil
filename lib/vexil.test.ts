@@ -102,4 +102,81 @@ describe("everyday validators", () => {
         expect(ts.normalized).toBe(".ts");
         expect(tarball.validate(vxl.FileExtension.compound())).toBe(true);
     });
+
+    test("cookie parses set-cookie strings and common security attributes", () => {
+        const cookie = new vxl.Cookie("session=abc123; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600");
+
+        expect(cookie.validate(vxl.Cookie.named("session"), vxl.Cookie.secure(), vxl.Cookie.httpOnly())).toBe(true);
+        expect(cookie.cookieValue).toBe("abc123");
+        expect(cookie.path).toBe("/");
+        expect(cookie.sameSite).toBe("Lax");
+        expect(cookie.maxAge).toBe(3600);
+        expect(cookie.validate(vxl.Cookie.persistent())).toBe(true);
+    });
+
+    test("cookie enforces browser security relationships", () => {
+        const sameSiteNone = new vxl.Cookie("id=1; SameSite=None");
+        const partitioned = new vxl.Cookie("id=1; Partitioned");
+        const hostCookie = new vxl.Cookie("__Host-id=1; Secure; Path=/");
+        const badHostCookie = new vxl.Cookie("__Host-id=1; Secure; Domain=example.com; Path=/");
+
+        expect(sameSiteNone.validate()).toBe(false);
+        expect(partitioned.validate()).toBe(false);
+        expect(hostCookie.validate(vxl.Cookie.hostPrefixCompliant())).toBe(true);
+        expect(badHostCookie.validate(vxl.Cookie.hostPrefixCompliant())).toBe(false);
+    });
+
+    test("cookie name and value validate standalone syntax", () => {
+        const name = new vxl.CookieName("__Secure-token");
+        const value = new vxl.CookieValue("hello%20world");
+        const badName = new vxl.CookieName("bad name");
+
+        expect(name.validate(vxl.CookieName.prefix("__Secure-"))).toBe(true);
+        expect(value.validate(vxl.CookieValue.encoded())).toBe(true);
+        expect(value.decoded).toBe("hello world");
+        expect(badName.validate()).toBe(false);
+    });
+
+    test("cookie create builds a valid set-cookie string", () => {
+        const cookie = vxl.Cookie.create("theme", "dark", {
+            path: "/",
+            maxAge: 3600,
+            sameSite: "Lax",
+            secure: true
+        });
+
+        expect(cookie.value).toBe("theme=dark; Max-Age=3600; Path=/; SameSite=Lax; Secure");
+        expect(cookie.validate(vxl.Cookie.named("theme"), vxl.Cookie.secure(), vxl.Cookie.persistent())).toBe(true);
+    });
+
+    test("cookie read finds a value from document-cookie style strings", () => {
+        const cookie = vxl.Cookie.read("theme=dark; session=abc123; locale=en-US", "session");
+        const missing = vxl.Cookie.read("theme=dark", "session");
+
+        expect(cookie?.validate(vxl.Cookie.named("session"))).toBe(true);
+        expect(cookie?.cookieValue).toBe("abc123");
+        expect(missing).toBeUndefined();
+    });
+
+    test("cookie update preserves attributes and changes requested fields", () => {
+        const cookie = new vxl.Cookie("session=abc123; Path=/; HttpOnly; Secure; SameSite=Lax");
+        const updated = vxl.Cookie.update(cookie, {
+            value: "def456",
+            sameSite: "Strict"
+        });
+
+        expect(updated.value).toBe("session=def456; Path=/; SameSite=Strict; Secure; HttpOnly");
+        expect(updated.validate(vxl.Cookie.httpOnly(), vxl.Cookie.secure(), vxl.Cookie.sameSite("Strict"))).toBe(true);
+    });
+
+    test("cookie delete returns an expired set-cookie string", () => {
+        const deleted = vxl.Cookie.delete("session", {
+            path: "/",
+            secure: true
+        });
+
+        expect(deleted.value).toBe("session=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/; Secure");
+        expect(deleted.validate(vxl.Cookie.named("session"), vxl.Cookie.persistent())).toBe(true);
+        expect(deleted.maxAge).toBe(0);
+    });
 });
