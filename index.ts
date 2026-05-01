@@ -42,6 +42,7 @@ const elementDimensionsInput = vxl.ElementDimensions.fromElement({
     }
 });
 const elementDimensions = new vxl.ElementDimensions(elementDimensionsInput);
+const sizedElement = elementDimensions.applyToElement({ style: {} });
 
 slug.validate(vxl.Slug.maxLength(80));
 phone.validate(vxl.PhoneNumber.e164());
@@ -60,3 +61,4 @@ dimensions.validate(
     vxl.ElementDimensions.withinViewport(1024, 768)
 );
 elementDimensions.validate(vxl.ElementDimensions.visible());
+sizedElement.style;

@@ -58,6 +58,7 @@ const isElementSizeValid = dimensions.validate(
 
 const elementDimensionsInput = vxl.ElementDimensions.fromElement(element);
 const elementDimensions = new vxl.ElementDimensions(elementDimensionsInput);
+const updatedElement = elementDimensions.applyToElement(element);
 ```
 
 ## Included Types

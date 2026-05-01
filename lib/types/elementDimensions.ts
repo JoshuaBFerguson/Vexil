@@ -17,6 +17,17 @@ export type ElementLike = {
 
 export type ElementDimensionsInput = ElementRectInput | ElementLike;
 
+export type ElementStyleTarget = {
+    style: {
+        width?: string;
+        height?: string;
+        left?: string;
+        top?: string;
+        right?: string;
+        bottom?: string;
+    };
+};
+
 function isElementLike(input: ElementDimensionsInput): input is ElementLike {
     return typeof (input as ElementLike).getBoundingClientRect === "function";
 }
@@ -27,6 +38,10 @@ function isFiniteNumber(input: number | undefined): input is number {
 
 function approximatelyEqual(left: number, right: number, tolerance = 0.01): boolean {
     return Math.abs(left - right) <= tolerance;
+}
+
+function toPixels(value: number): string {
+    return `${value}px`;
 }
 
 export class VexilElementDimensions extends Vexil<ElementDimensionsInput> {
@@ -116,6 +131,38 @@ export class VexilElementDimensions extends Vexil<ElementDimensionsInput> {
             this.left !== undefined && this.right !== undefined && approximatelyEqual(this.right - this.left, this.width ?? Number.NaN),
             this.top !== undefined && this.bottom !== undefined && approximatelyEqual(this.bottom - this.top, this.height ?? Number.NaN)
         );
+    }
+
+    public applyToElement<T extends ElementStyleTarget>(element: T): T {
+        if (!this.validate()) {
+            return element;
+        }
+
+        if (this.width !== undefined) {
+            element.style.width = toPixels(this.width);
+        }
+
+        if (this.height !== undefined) {
+            element.style.height = toPixels(this.height);
+        }
+
+        if (this.left !== undefined) {
+            element.style.left = toPixels(this.left);
+        }
+
+        if (this.top !== undefined) {
+            element.style.top = toPixels(this.top);
+        }
+
+        if (this.right !== undefined) {
+            element.style.right = toPixels(this.right);
+        }
+
+        if (this.bottom !== undefined) {
+            element.style.bottom = toPixels(this.bottom);
+        }
+
+        return element;
     }
 
     static visible() {

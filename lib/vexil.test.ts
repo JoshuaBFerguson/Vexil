@@ -250,6 +250,45 @@ describe("everyday validators", () => {
         expect(rect.validate(vxl.ElementDimensions.visible(), vxl.ElementDimensions.landscape())).toBe(true);
     });
 
+    test("element dimensions apply current dimensions to an element style", () => {
+        const rect = new vxl.ElementDimensions({
+            left: 5,
+            top: 10,
+            right: 105,
+            bottom: 60,
+            width: 100,
+            height: 50
+        });
+        const element = { style: {} };
+        const updated = rect.applyToElement(element);
+
+        expect(updated).toBe(element);
+        expect(updated.style).toEqual({
+            width: "100px",
+            height: "50px",
+            left: "5px",
+            top: "10px",
+            right: "105px",
+            bottom: "60px"
+        });
+    });
+
+    test("element dimensions do not apply invalid dimensions to an element style", () => {
+        const rect = new vxl.ElementDimensions({
+            left: 0,
+            top: 0,
+            right: 100,
+            bottom: 50,
+            width: 80,
+            height: 50
+        });
+        const element = { style: { width: "20px" } };
+        const updated = rect.applyToElement(element);
+
+        expect(updated).toBe(element);
+        expect(updated.style).toEqual({ width: "20px" });
+    });
+
     test("element dimensions reject inconsistent or invalid boxes", () => {
         const inconsistent = new vxl.ElementDimensions({
             left: 0,
