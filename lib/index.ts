@@ -8,6 +8,7 @@ import { VexilHexColor } from "./types/hexColor";
 import { VexilSlug } from "./types/slug";
 import { VexilPhoneNumber } from "./types/phoneNumber";
 import { VexilIPAddress } from "./types/ipAddress";
+import { VexilPath, VexilFileName, VexilFileExtension } from "./types/fileSystem";
 
 export default {
     String: Primitives.VexilString,
@@ -22,5 +23,8 @@ export default {
     HexColor: VexilHexColor,
     Slug: VexilSlug,
     PhoneNumber: VexilPhoneNumber,
-    IPAddress: VexilIPAddress
+    IPAddress: VexilIPAddress,
+    Path: VexilPath,
+    FileName: VexilFileName,
+    FileExtension: VexilFileExtension
 };

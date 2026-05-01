@@ -74,4 +74,32 @@ describe("everyday validators", () => {
         expect(linkLocal.validate(vxl.IPAddress.publicRange())).toBe(false);
         expect(v6.validate(vxl.IPAddress.v6())).toBe(true);
     });
+
+    test("path validates normalized paths and traversal constraints", () => {
+        const path = new vxl.Path("src/components/Button.tsx");
+        const unsafePath = new vxl.Path("../secrets.env");
+
+        expect(path.validate(vxl.Path.relative(), vxl.Path.extension("tsx"), vxl.Path.noTraversal())).toBe(true);
+        expect(path.baseName).toBe("Button.tsx");
+        expect(unsafePath.validate(vxl.Path.noTraversal())).toBe(false);
+    });
+
+    test("file name rejects separators and reserved names", () => {
+        const fileName = new vxl.FileName("report.pdf");
+        const nested = new vxl.FileName("reports/report.pdf");
+        const reserved = new vxl.FileName("CON");
+
+        expect(fileName.validate(vxl.FileName.extension(".pdf"))).toBe(true);
+        expect(nested.validate()).toBe(false);
+        expect(reserved.validate()).toBe(false);
+    });
+
+    test("file extension normalizes dotted and bare extensions", () => {
+        const ts = new vxl.FileExtension("TS");
+        const tarball = new vxl.FileExtension(".tar.gz");
+
+        expect(ts.validate(vxl.FileExtension.inSet(".ts"))).toBe(true);
+        expect(ts.normalized).toBe(".ts");
+        expect(tarball.validate(vxl.FileExtension.compound())).toBe(true);
+    });
 });

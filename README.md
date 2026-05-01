@@ -27,11 +27,18 @@ const isEmailValid = email.validate(
 
 const slug = new vxl.Slug("daily-build-notes");
 const isSlugValid = slug.validate(vxl.Slug.maxLength(80));
+
+const path = new vxl.Path("src/components/Button.tsx");
+const isPathValid = path.validate(
+  vxl.Path.extension("tsx"),
+  vxl.Path.noTraversal()
+);
 ```
 
 ## Included Types
 - Primitives: `Number`, `String`, `Boolean`
 - Formats: `EmailAddress`, `Currency`, `URL`, `UUID`, `HexColor`, `Slug`, `PhoneNumber`, `IPAddress`
+- File system: `Path`, `FileName`, `FileExtension`
 - Dates: `Date`
 
 ## Install & Run (Bun)
