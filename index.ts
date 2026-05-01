@@ -35,6 +35,13 @@ const createdCookie = vxl.Cookie.create("theme", "dark", { path: "/", sameSite: 
 const readCookie = vxl.Cookie.read("theme=dark; session=abc123", "session");
 const updatedCookie = vxl.Cookie.update(cookie, { value: "def456", sameSite: "Strict" });
 const deletedCookie = vxl.Cookie.delete("session", { path: "/" });
+const dimensions = new vxl.ElementDimensions({ x: 0, y: 0, width: 320, height: 180 });
+const elementDimensionsInput = vxl.ElementDimensions.fromElement({
+    getBoundingClientRect() {
+        return { x: 0, y: 0, width: 100, height: 50 };
+    }
+});
+const elementDimensions = new vxl.ElementDimensions(elementDimensionsInput);
 
 slug.validate(vxl.Slug.maxLength(80));
 phone.validate(vxl.PhoneNumber.e164());
@@ -47,3 +54,9 @@ createdCookie.validate();
 readCookie?.validate();
 updatedCookie.validate();
 deletedCookie.validate();
+dimensions.validate(
+    vxl.ElementDimensions.visible(),
+    vxl.ElementDimensions.aspectRatio(16 / 9),
+    vxl.ElementDimensions.withinViewport(1024, 768)
+);
+elementDimensions.validate(vxl.ElementDimensions.visible());

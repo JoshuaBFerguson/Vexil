@@ -10,6 +10,7 @@ import { VexilPhoneNumber } from "./types/phoneNumber";
 import { VexilIPAddress } from "./types/ipAddress";
 import { VexilPath, VexilFileName, VexilFileExtension } from "./types/fileSystem";
 import { VexilCookie, VexilCookieName, VexilCookieValue } from "./types/cookie";
+import { VexilElementDimensions } from "./types/elementDimensions";
 
 export default {
     String: Primitives.VexilString,
@@ -30,5 +31,6 @@ export default {
     FileExtension: VexilFileExtension,
     Cookie: VexilCookie,
     CookieName: VexilCookieName,
-    CookieValue: VexilCookieValue
+    CookieValue: VexilCookieValue,
+    ElementDimensions: VexilElementDimensions
 };

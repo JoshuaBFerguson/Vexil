@@ -179,4 +179,92 @@ describe("everyday validators", () => {
         expect(deleted.validate(vxl.Cookie.named("session"), vxl.Cookie.persistent())).toBe(true);
         expect(deleted.maxAge).toBe(0);
     });
+
+    test("element dimensions parse plain rect-like objects", () => {
+        const rect = new vxl.ElementDimensions({
+            x: 10,
+            y: 20,
+            width: 320,
+            height: 180
+        });
+
+        expect(rect.validate(
+            vxl.ElementDimensions.visible(),
+            vxl.ElementDimensions.aspectRatio(16 / 9),
+            vxl.ElementDimensions.withinViewport(1024, 768)
+        )).toBe(true);
+        expect(rect.right).toBe(330);
+        expect(rect.bottom).toBe(200);
+        expect(rect.area).toBe(57600);
+        expect(rect.centerX).toBe(170);
+        expect(rect.centerY).toBe(110);
+    });
+
+    test("element dimensions parse getBoundingClientRect inputs", () => {
+        const element = {
+            getBoundingClientRect() {
+                return {
+                    left: -50,
+                    top: 100,
+                    right: 150,
+                    bottom: 300,
+                    width: 200,
+                    height: 200
+                };
+            }
+        };
+        const rect = new vxl.ElementDimensions(element);
+
+        expect(rect.validate(vxl.ElementDimensions.square(), vxl.ElementDimensions.intersectsViewport(1024, 768))).toBe(true);
+        expect(rect.validate(vxl.ElementDimensions.withinViewport(1024, 768))).toBe(false);
+    });
+
+    test("element dimensions fromElement returns constructor-ready input", () => {
+        const element = {
+            getBoundingClientRect() {
+                return {
+                    x: 5,
+                    y: 10,
+                    left: 5,
+                    top: 10,
+                    right: 105,
+                    bottom: 60,
+                    width: 100,
+                    height: 50
+                };
+            }
+        };
+        const input = vxl.ElementDimensions.fromElement(element);
+        const rect = new vxl.ElementDimensions(input);
+
+        expect(input).toEqual({
+            x: 5,
+            y: 10,
+            left: 5,
+            top: 10,
+            right: 105,
+            bottom: 60,
+            width: 100,
+            height: 50
+        });
+        expect(rect.validate(vxl.ElementDimensions.visible(), vxl.ElementDimensions.landscape())).toBe(true);
+    });
+
+    test("element dimensions reject inconsistent or invalid boxes", () => {
+        const inconsistent = new vxl.ElementDimensions({
+            left: 0,
+            top: 0,
+            right: 100,
+            bottom: 50,
+            width: 80,
+            height: 50
+        });
+        const invalid = new vxl.ElementDimensions({
+            width: Number.NaN,
+            height: 20
+        });
+
+        expect(inconsistent.validate()).toBe(false);
+        expect(invalid.validate()).toBe(false);
+    });
 });

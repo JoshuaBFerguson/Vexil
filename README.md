@@ -48,13 +48,23 @@ const createdCookie = vxl.Cookie.create("theme", "dark", {
 const readCookie = vxl.Cookie.read("theme=dark; session=abc123", "session");
 const updatedCookie = vxl.Cookie.update(cookie, { value: "def456" });
 const deletedCookie = vxl.Cookie.delete("session", { path: "/" });
+
+const dimensions = new vxl.ElementDimensions({ x: 0, y: 0, width: 320, height: 180 });
+const isElementSizeValid = dimensions.validate(
+  vxl.ElementDimensions.visible(),
+  vxl.ElementDimensions.aspectRatio(16 / 9),
+  vxl.ElementDimensions.withinViewport(1024, 768)
+);
+
+const elementDimensionsInput = vxl.ElementDimensions.fromElement(element);
+const elementDimensions = new vxl.ElementDimensions(elementDimensionsInput);
 ```
 
 ## Included Types
 - Primitives: `Number`, `String`, `Boolean`
 - Formats: `EmailAddress`, `Currency`, `URL`, `UUID`, `HexColor`, `Slug`, `PhoneNumber`, `IPAddress`
 - File system: `Path`, `FileName`, `FileExtension`
-- Browser: `Cookie`, `CookieName`, `CookieValue`
+- Browser: `Cookie`, `CookieName`, `CookieValue`, `ElementDimensions`
 - Dates: `Date`
 
 ## Install & Run (Bun)
