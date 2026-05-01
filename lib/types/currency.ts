@@ -4,12 +4,19 @@ export class VexilCurrency extends Vexil<string> {
     public amount?: number;
     public currencyCode?: string;
 
-    constructor(currencyString: string | number) {
-        super(currencyString.toString());
+    constructor(currencyString: string | number, currencyCode?: string) {
+        super(
+            typeof currencyString === "number" && currencyCode
+                ? `${currencyString} ${currencyCode}`
+                : currencyString.toString()
+        );
         this.parse();
     }
 
-    private parse() {
+    protected override parse() {
+        this.amount = undefined;
+        this.currencyCode = undefined;
+
         const cleaned = this.value.trim();
         // Regex to match formats like "100 USD", "-100.50 eur", "123.45GBP" (with optional space)
         const match = cleaned.match(/^([+-]?\d+(?:\.\d+)?)\s*([A-Za-z]{3})$/);
@@ -20,15 +27,18 @@ export class VexilCurrency extends Vexil<string> {
     }
 
     public override validate(...args: (boolean | ((inst: VexilCurrency) => boolean))[]): boolean {
+        this.parse();
         return super.validate(...args, Number.isFinite(this.amount), !!this.currencyCode && /^[A-Z]{3}$/.test(this.currencyCode));
     }
 
     static allowedCurrencies(...args: string[]) {
-        return (inst: VexilCurrency): boolean => !!inst.currencyCode && args.includes(inst.currencyCode);
+        const codes = args.map((code) => code.toUpperCase());
+        return (inst: VexilCurrency): boolean => !!inst.currencyCode && codes.includes(inst.currencyCode);
     }
 
     static disallowedCurrencies(...args: string[]) {
-        return (inst: VexilCurrency): boolean => !inst.currencyCode || !args.includes(inst.currencyCode);
+        const codes = args.map((code) => code.toUpperCase());
+        return (inst: VexilCurrency): boolean => !inst.currencyCode || !codes.includes(inst.currencyCode);
     }
 
     static positiveAmount() {

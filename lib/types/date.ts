@@ -16,27 +16,27 @@ export class VexilDate extends Vexil<Date> {
     }
 
     public override validate(...args: (boolean | ((inst: VexilDate) => boolean))[]): boolean {
-        return super.validate(...args, isValidDate(this.input));
+        return super.validate(...args, isValidDate(this.value));
     }
 
     static before(date: DateInput) {
         const cmp = toDate(date);
-        return (inst: VexilDate): boolean => isValidDate(cmp) && inst.input.getTime() < cmp.getTime();
+        return (inst: VexilDate): boolean => isValidDate(cmp) && inst.value.getTime() < cmp.getTime();
     }
 
     static after(date: DateInput) {
         const cmp = toDate(date);
-        return (inst: VexilDate): boolean => isValidDate(cmp) && inst.input.getTime() > cmp.getTime();
+        return (inst: VexilDate): boolean => isValidDate(cmp) && inst.value.getTime() > cmp.getTime();
     }
 
     static onOrBefore(date: DateInput) {
         const cmp = toDate(date);
-        return (inst: VexilDate): boolean => isValidDate(cmp) && inst.input.getTime() <= cmp.getTime();
+        return (inst: VexilDate): boolean => isValidDate(cmp) && inst.value.getTime() <= cmp.getTime();
     }
 
     static onOrAfter(date: DateInput) {
         const cmp = toDate(date);
-        return (inst: VexilDate): boolean => isValidDate(cmp) && inst.input.getTime() >= cmp.getTime();
+        return (inst: VexilDate): boolean => isValidDate(cmp) && inst.value.getTime() >= cmp.getTime();
     }
 
     static between(min: DateInput, max: DateInput) {
@@ -45,28 +45,28 @@ export class VexilDate extends Vexil<Date> {
         return (inst: VexilDate): boolean =>
             isValidDate(minDate) &&
             isValidDate(maxDate) &&
-            inst.input.getTime() > minDate.getTime() &&
-            inst.input.getTime() < maxDate.getTime();
+            inst.value.getTime() > minDate.getTime() &&
+            inst.value.getTime() < maxDate.getTime();
     }
 
     static isPast() {
-        return (inst: VexilDate): boolean => inst.input.getTime() < Date.now();
+        return (inst: VexilDate): boolean => inst.value.getTime() < Date.now();
     }
 
     static isFuture() {
-        return (inst: VexilDate): boolean => inst.input.getTime() > Date.now();
+        return (inst: VexilDate): boolean => inst.value.getTime() > Date.now();
     }
 
     static isWeekend() {
         return (inst: VexilDate): boolean => {
-            const day = inst.input.getDay();
+            const day = inst.value.getDay();
             return day === 0 || day === 6;
         };
     }
 
     static isWeekday() {
         return (inst: VexilDate): boolean => {
-            const day = inst.input.getDay();
+            const day = inst.value.getDay();
             return day >= 1 && day <= 5;
         };
     }

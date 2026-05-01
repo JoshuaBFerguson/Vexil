@@ -11,8 +11,8 @@ export class VexilHexColor extends Vexil<string> {
         this.parse();
     }
 
-    private parse() {
-        const match = this.input.match(HEX_COLOR_REGEX);
+    protected override parse() {
+        const match = this.value.match(HEX_COLOR_REGEX);
         if (match) {
             const hex = match[1]!.toLowerCase();
             this.length = hex.length;
@@ -24,6 +24,7 @@ export class VexilHexColor extends Vexil<string> {
     }
 
     public override validate(...args: (boolean | ((inst: VexilHexColor) => boolean))[]): boolean {
+        this.parse();
         return super.validate(...args, !!this.normalized);
     }
 

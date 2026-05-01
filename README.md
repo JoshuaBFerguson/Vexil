@@ -24,17 +24,21 @@ const email = new vxl.EmailAddress("me@example.com");
 const isEmailValid = email.validate(
   vxl.EmailAddress.allowedDomains("com", "net")
 );
+
+const slug = new vxl.Slug("daily-build-notes");
+const isSlugValid = slug.validate(vxl.Slug.maxLength(80));
 ```
 
 ## Included Types
 - Primitives: `Number`, `String`, `Boolean`
-- Formats: `EmailAddress`, `Currency`, `URL`, `UUID`, `HexColor`
+- Formats: `EmailAddress`, `Currency`, `URL`, `UUID`, `HexColor`, `Slug`, `PhoneNumber`, `IPAddress`
 - Dates: `Date`
 
 ## Install & Run (Bun)
 ```bash
 bun install
-bun run index.ts
+bun run dev
+bun test
 ```
 
 ## How It Works

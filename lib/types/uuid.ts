@@ -11,8 +11,8 @@ export class VexilUUID extends Vexil<string> {
         this.parse();
     }
 
-    private parse() {
-        if (UUID_REGEX.test(this.value)) {
+    protected override parse() {
+        if (this.value === NIL_UUID || UUID_REGEX.test(this.value)) {
             this.normalized = this.value.toLowerCase();
         } else {
             this.normalized = undefined;
@@ -20,6 +20,7 @@ export class VexilUUID extends Vexil<string> {
     }
 
     public override validate(...args: (boolean | ((inst: VexilUUID) => boolean))[]): boolean {
+        this.parse();
         return super.validate(...args, !!this.normalized);
     }
 
@@ -37,10 +38,13 @@ export class VexilUUID extends Vexil<string> {
     }
 
     static create(): string {
-        // Generate a random UUID v4
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        if (typeof globalThis.crypto?.randomUUID === "function") {
+            return globalThis.crypto.randomUUID();
+        }
+
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
             const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            const v = c === "x" ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     }

@@ -10,7 +10,7 @@ type ParsedURL = {
 };
 
 interface URLConstructor {
-    new (input: string): ParsedURL;
+    new(input: string): ParsedURL;
 }
 
 function getURLCtor(): ((input: string) => ParsedURL) | undefined {
@@ -26,21 +26,22 @@ export class VexilURL extends Vexil<string> {
         this.parse();
     }
 
-    private parse() {
+    protected override parse() {
         try {
             const URLCtor = getURLCtor() as URLConstructor | undefined;
-            this.url = URLCtor ? new URLCtor(this.input) : undefined;
+            this.url = URLCtor ? new URLCtor(this.value) : undefined;
         } catch {
             this.url = undefined;
         }
     }
 
     public override validate(...args: (boolean | ((inst: VexilURL) => boolean))[]): boolean {
+        this.parse();
         return super.validate(...args, !!this.url);
     }
 
     static allowedProtocols(...protocols: string[]) {
-        const normalized = protocols.map((p) => p.endsWith(":") ? p : `${p}:`);
+        const normalized = protocols.map((p) => p.toLowerCase()).map((p) => p.endsWith(":") ? p : `${p}:`);
         return (inst: VexilURL): boolean => !!inst.url && normalized.includes(inst.url.protocol);
     }
 
@@ -49,11 +50,13 @@ export class VexilURL extends Vexil<string> {
     }
 
     static allowedHosts(...hosts: string[]) {
-        return (inst: VexilURL): boolean => !!inst.url && hosts.includes(inst.url.hostname);
+        const cleanHosts = hosts.map((host) => host.toLowerCase());
+        return (inst: VexilURL): boolean => !!inst.url && cleanHosts.includes(inst.url.hostname);
     }
 
     static disallowedHosts(...hosts: string[]) {
-        return (inst: VexilURL): boolean => !inst.url || !hosts.includes(inst.url.hostname);
+        const cleanHosts = hosts.map((host) => host.toLowerCase());
+        return (inst: VexilURL): boolean => !inst.url || !cleanHosts.includes(inst.url.hostname);
     }
 
     static hasPath() {

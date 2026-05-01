@@ -7,6 +7,8 @@ const ageIsValid = age.validate(
     vxl.Number.between(1, 200)
 );
 
+age.value += 1;
+
 
 const email = new vxl.EmailAddress("me@joshua.com");
 const emailIsValid = email.validate(
@@ -17,7 +19,15 @@ const emailIsValid = email.validate(
 email.value
 
 
-const money = new vxl.Currency(200.50);
+const money = new vxl.Currency(200.50, "USD");
 
 
-const id = new vxl.UUID(vxl.UUID.create())
+const id = new vxl.UUID(vxl.UUID.create());
+
+const slug = new vxl.Slug("daily-build-notes");
+const phone = new vxl.PhoneNumber("+15551234567");
+const ip = new vxl.IPAddress("192.168.1.1");
+
+slug.validate(vxl.Slug.maxLength(80));
+phone.validate(vxl.PhoneNumber.e164());
+ip.validate(vxl.IPAddress.privateRange());

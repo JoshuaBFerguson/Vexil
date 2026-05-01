@@ -10,6 +10,8 @@
     "typescript": "^5"
   },
   "scripts": {
-    "dev": "bun run index.ts"
+    "dev": "bun run index.ts",
+    "test": "bun test",
+    "typecheck": "bunx tsc --noEmit"
   }
 }

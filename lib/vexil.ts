@@ -1,12 +1,20 @@
 
 export default abstract class Vexil<T> {
     private _input: T;
+
     constructor(input: T) {
         this._input = input;
     }
 
+    protected parse() { }
+
     public get value() {
         return this._input;
+    }
+
+    public set value(input: T) {
+        this._input = input;
+        this.parse();
     }
 
     public toString() {
@@ -14,6 +22,7 @@ export default abstract class Vexil<T> {
     }
 
     public validate(...args: Array<boolean | ((inst: this) => boolean)>) {
+        this.parse();
         return args.every((a) => typeof a === "function" ? !!a(this) : !!a);
     }
 

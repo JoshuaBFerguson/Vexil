@@ -1,5 +1,10 @@
 import Vexil from "../vexil";
 
+function regexTest(pattern: RegExp, value: string): boolean {
+    pattern.lastIndex = 0;
+    return pattern.test(value);
+}
+
 export class VexilNumber extends Vexil<number> {
 
     public override validate(...args: (boolean | ((inst: VexilNumber) => boolean))[]): boolean {
@@ -126,7 +131,7 @@ export class VexilString extends Vexil<string> {
     }
 
     static matchesPattern(pattern: RegExp) {
-        return (inst: VexilString) => pattern.test(inst.value);
+        return (inst: VexilString) => regexTest(pattern, inst.value);
     }
 
     static alphanumeric() {

@@ -1,5 +1,10 @@
 import Vexil from "../vexil";
 
+function regexTest(pattern: RegExp, value: string): boolean {
+    pattern.lastIndex = 0;
+    return pattern.test(value);
+}
+
 export class VexilEmailAddress extends Vexil<string> {
     public userName?: string;
     public hostName?: string;
@@ -11,11 +16,16 @@ export class VexilEmailAddress extends Vexil<string> {
         this.parse();
     }
 
-    private parse() {
+    protected override parse() {
+        this.userName = undefined;
+        this.hostName = undefined;
+        this.domainName = undefined;
+        this.fullDomain = undefined;
+
         const match = this.value.match(/^([^@\s]+)@([^@\s]+)$/);
         if (match) {
             this.userName = match[1];
-            const domain = match[2];
+            const domain = match[2]?.toLowerCase();
             this.fullDomain = domain;
             const parts = (domain ?? "").split(".").filter(Boolean);
             if (parts.length >= 2) {
@@ -26,6 +36,7 @@ export class VexilEmailAddress extends Vexil<string> {
     }
 
     public override validate(...args: (boolean | ((inst: VexilEmailAddress) => boolean))[]): boolean {
+        this.parse();
         return super.validate(
             ...args as Array<boolean | ((inst: Vexil<string>) => boolean)>,
             !!this.userName,
@@ -35,12 +46,12 @@ export class VexilEmailAddress extends Vexil<string> {
     }
 
     static allowedDomains(...args: string[]) {
-        const cleanDomains = args.map((d) => d[0] === "." ? d.slice(1) : d);
+        const cleanDomains = args.map((d) => (d[0] === "." ? d.slice(1) : d).toLowerCase());
         return (inst: VexilEmailAddress): boolean => !!inst.domainName && cleanDomains.includes(inst.domainName);
     }
 
     static disallowedDomains(...args: string[]) {
-        const cleanDomains = args.map((d) => d[0] === "." ? d.slice(1) : d);
+        const cleanDomains = args.map((d) => (d[0] === "." ? d.slice(1) : d).toLowerCase());
         return (inst: VexilEmailAddress): boolean => !inst.domainName || !cleanDomains.includes(inst.domainName);
     }
 
@@ -69,15 +80,18 @@ export class VexilEmailAddress extends Vexil<string> {
     }
 
     static requiredTLD(...args: string[]) {
-        return (inst: VexilEmailAddress): boolean => !!inst.domainName && args.includes(inst.domainName);
+        const cleanDomains = args.map((d) => (d[0] === "." ? d.slice(1) : d).toLowerCase());
+        return (inst: VexilEmailAddress): boolean => !!inst.domainName && cleanDomains.includes(inst.domainName);
     }
 
     static allowedHosts(...args: string[]) {
-        return (inst: VexilEmailAddress): boolean => !!inst.fullDomain && args.includes(inst.fullDomain);
+        const cleanHosts = args.map((host) => host.toLowerCase());
+        return (inst: VexilEmailAddress): boolean => !!inst.fullDomain && cleanHosts.includes(inst.fullDomain);
     }
 
     static disallowedHosts(...args: string[]) {
-        return (inst: VexilEmailAddress): boolean => !inst.fullDomain || !args.includes(inst.fullDomain);
+        const cleanHosts = args.map((host) => host.toLowerCase());
+        return (inst: VexilEmailAddress): boolean => !inst.fullDomain || !cleanHosts.includes(inst.fullDomain);
     }
 
     static noDotsInUsername() {
@@ -85,10 +99,10 @@ export class VexilEmailAddress extends Vexil<string> {
     }
 
     static usernameMatchesPattern(pattern: RegExp) {
-        return (inst: VexilEmailAddress): boolean => !!inst.userName && pattern.test(inst.userName);
+        return (inst: VexilEmailAddress): boolean => !!inst.userName && regexTest(pattern, inst.userName);
     }
 
     static hostMatchesPattern(pattern: RegExp) {
-        return (inst: VexilEmailAddress): boolean => !!inst.fullDomain && pattern.test(inst.fullDomain);
+        return (inst: VexilEmailAddress): boolean => !!inst.fullDomain && regexTest(pattern, inst.fullDomain);
     }
 }
